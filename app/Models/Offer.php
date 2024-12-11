@@ -28,5 +28,8 @@ class Offer extends Model
     {
         return $this->belongsTo(Cari::class, 'cari_id');
     }
-
+    public function details()
+    {
+        return $this->hasMany(OfferDetails::class);
+    }
 }

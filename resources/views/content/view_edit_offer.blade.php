@@ -42,14 +42,15 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group d-flex align-items-center">
-                                        <select id="customerSelect" name="customerSelect" class="form-control selectCustomer mr-2" style="width: auto;">
+                                        <select id="customerSelect" name="customerSelect" class="form-control customerSelect mr-2" style="width: auto;">
                                             <option value="">Lütfen seçiniz</option> <!-- Placeholder için boş bir seçenek -->
                                             @foreach($customers as $customer)
                                                 <option value="{{ $customer->id }}" 
-                                                    {{ 88 == $customer->id ? 'selected' : "" }}>$customer->relatedPerson</option>
+                                                    {{ $offer->customer_id == $customer->id ? 'selected' : '' }}>
+                                                    {{ $customer->relatedPerson }}
+                                                </option>
                                             @endforeach
                                         </select>
-
                                         <button type="button" class="btn btn-sm btn-pill btn-outline-primary font-weight-bolder ml-2" id="createNewCari">
                                             <i class="fas fa-plus"></i> Ekle
                                         </button>
@@ -576,7 +577,13 @@ aria-labelledby="staticBackdrop" aria-hidden="true">
                         allowClear: true,
                         width: '100%'
                     }).val(null).trigger('change'); // Seçimi temizle
+
+                    selectBox.val("{{ $offer->cari_id }}").trigger('change');
+                    selectBox.val("{{ $offer->confirmation }}").trigger('change');
                     selectBox.trigger('change'); // Select2'yi güncelle
+                    console.log('cari_id:', "{{ $offer->cari_id }}");
+                    console.log('confirmation:', "{{ $offer->confirmation }}");
+
                 },
                 error: function () {
                     alert("Cariler yüklenirken bir hata oluştu.");

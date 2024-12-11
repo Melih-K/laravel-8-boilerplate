@@ -46,7 +46,7 @@ Route::post('/store-address', [CariController::class, 'storeAddress'])->name('ca
 
 Route::get('/offer_add', [OfferController::class, 'indexAdd'])->name('offer.add');
 Route::get('/offer/{id}/edit', [OfferController::class, 'edit'])->name('offer.edit');
-
+Route::get('/offer/stocks', [OfferController::class, 'getStocks'])->name('stocks.get');
 Route::get('/offers', [OfferController::class, 'index'])->name('offer.index');
 Route::get('/cariler', [OfferController::class, 'getCariler'])->name('cariler.get');
 

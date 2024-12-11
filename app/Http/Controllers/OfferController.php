@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cari;
 use App\Models\Offer;
+use App\Models\Stock;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -43,7 +44,7 @@ class OfferController extends Controller
                 'content'    => 'content.view_offers',
                 'title'    => 'Teklifler'
             ];
-
+            
             if ($request->ajax()) {
                 $q_offer = Offer::select('*')->orderByDesc('created_at');
                 return Datatables::of($q_offer)
@@ -57,7 +58,6 @@ class OfferController extends Controller
                         ->rawColumns(['action'])
                         ->make(true);
             }
-
             return view('layouts.v_template',$data);
         }
 
@@ -84,6 +84,7 @@ class OfferController extends Controller
                 'description3' => 'nullable|string',
                 'ekalan1' => 'nullable|string',
                 'ekalan2' => 'nullable|string',
+                'products' => 'required|string', // Burada string olarak alıyoruz, JSON formatı olarak
             ]);
 
             // `offer_id` mevcut mu kontrol et
@@ -101,7 +102,29 @@ class OfferController extends Controller
                 $offer = Offer::create($validated);
             }
 
-            return response()->json(['success' => true, 'offer' => $offer]);
+            // Teklif detaylarını güncelle
+            $offer->details()->delete(); // Eski detayları sil
+
+            // `products` alanını JSON'dan PHP dizisine dönüştür
+            $products = json_decode($request->input('products'), true);  // true parametresi ile dizi olarak alıyoruz.
+
+            // `products` dizisi kontrolü
+            if ($products && is_array($products)) {
+                foreach ($products as $product) {
+                    // Detayları ekle
+                    $offer->details()->create([
+                        'stock_id' => $product['stock_id'],
+                        'currency' => $product['currency'],
+                        'quantity' => $product['quantity'],
+                        'price' => $product['price'],
+                        'total' => $product['quantity'] * $product['price'],
+                    ]);
+                }
+            } else {
+                return response()->json(['success' => false, 'message' => 'Ürün bilgileri eksik veya hatalı.'], 400);
+            }
+
+            return response()->json(['success' => true, 'message' => 'Teklif ve detayları başarıyla kaydedildi.']);
         }
 
         public function edit($id)
@@ -116,7 +139,6 @@ class OfferController extends Controller
                 'content'    => 'content.view_edit_offer',
                 'title'    => 'Teklif Ekle'
             ];
-
             return view('layouts.v_template',$data);
         }
 
@@ -124,5 +146,12 @@ class OfferController extends Controller
         {
             Offer::find($id)->delete();
             return response()->json(['success'=>'Offer deleted!']);
+        }
+
+        public function getStocks()
+        {
+            $stocks = Stock::all(['id', 'description']);
+            
+            return response()->json($stocks);
         }
 }

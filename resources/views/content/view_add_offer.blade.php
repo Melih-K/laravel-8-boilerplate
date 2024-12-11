@@ -25,7 +25,11 @@
     #createNewCari {
         display: flex;
         align-items: center;
+    }   
+    .productSelect2 {
+    margin-right: 20px !important; /* Örneğin, sağ tarafa 20px margin eklemek */
     }
+    
 </style>
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -97,8 +101,14 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-sm-2">
+                                <button onclick="cloneDiv()" type="button" class="btn btn-success btn-icon ml-2 mb-2"><i class="fas fa-plus"></i></button>
+                            </div>
+                            <div class="row mt-2" id="productRows">
+                                <!-- Dinamik olarak eklenecek satırlar buraya gelecek -->
+                            </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-primary font-weight-bold" id="saveBtnOffer">Kaydet</button>
+                                <button type="button" class="btn btn-sm btn-primary btn-pill font-weight-bold" id="saveBtnOffer">Kaydet</button>
                             </div>
                         </form>
                     </div>
@@ -107,7 +117,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- Cari Modal-->
 <div class="modal fade" id="modal-cari" data-backdrop="static" tabindex="-1" role="dialog"
@@ -459,6 +468,69 @@ aria-labelledby="staticBackdrop" aria-hidden="true">
 </div>
 @push('scripts')
 <script>
+    function cloneDiv() {
+        var newRow = `
+            <div class="col-md-12 productRow">
+                <div class="form-group d-flex align-items-center">
+                    <select class="form-control productSelect2 mr-2" style="width: 30%; margin-right: 10px;">
+                        <option value="">Ürün Seçin</option>
+                        <!-- Ürün seçenekleri burada dinamik olarak yüklenecek -->
+                    </select>
+                    <select class="form-control currencySelect" style="width: 15%; margin-right: 10px;">
+                        <option value="TL">TL</option>
+                        <option value="EUR">EUR</option>
+                    </select>
+                    <input type="number" class="form-control quantity" style="width: 15%; margin-right: 10px;" placeholder="Adet">
+                    <input type="number" class="form-control price" style="width: 15%; margin-right: 10px;" placeholder="Fiyat">
+                    <input type="number" class="form-control total" style="width: 15%;" placeholder="Toplam" readonly>
+                    <button type="button" class="btn btn-danger removeRowBtn" style="margin-left: 10px;">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        $('#productRows').append(newRow);
+        
+        // Yeni eklenen satırdaki select2'yi başlat
+        $('.productSelect2').select2({
+            placeholder: "Ürün Seçin",
+            allowClear: true,
+            width: '100%',
+            
+            ajax: {
+                url: "{{ route('stocks.get') }}", // Laravel route URL
+                dataType: 'json',
+                delay: 250,
+                processResults: function (data) {
+                    // Verileri select2 formatına uygun hale getir
+                    return {
+                        results: data.map(function (stock) {
+                            return {
+                                id: stock.id,
+                                text: stock.description // 'product_name' burada ürün adıdır
+                            };
+                        })
+                    };
+                }
+            }
+        });
+
+        // Yeni eklenen satırdaki adet ve fiyat girişine odaklan
+        $('.quantity, .price').on('input', function() {
+            var row = $(this).closest('.productRow');
+            var quantity = row.find('.quantity').val();
+            var price = row.find('.price').val();
+            var total = quantity * price;
+            row.find('.total').val(total.toFixed(2)); // Toplamı 2 ondalıklı olarak ayarla
+        });
+
+        // Satırı silme işlevi
+        $('.removeRowBtn').on('click', function() {
+            $(this).closest('.productRow').remove();
+        });
+    }
+
     $(document).ready(function () {
         // CSRF token
         $.ajaxSetup({
@@ -490,17 +562,18 @@ aria-labelledby="staticBackdrop" aria-hidden="true">
         // Ülke seçimi için Select2 başlatma
         $('#modal-cari').on('shown.bs.modal', function () {
             $('#country_id').select2({
-                placeholder: "Bir ülke seçin", // Placeholder metni
-                allowClear: true,             // Seçimi temizlemek için çarpı simgesi ekler
-                width: '100%'                 // Tam genişlikte gösterim
+                placeholder: "Bir ülke seçin",
+                allowClear: true,
+                width: '100%'
             });
             $('#country_id').val(null).trigger('change');
         });
-       // Müşteri seçimi için Select2 başlatma
+
+        // Müşteri seçimi için Select2 başlatma
         $('#customerSelect').select2({
-            placeholder: "Lütfen bir müşteri seçin", // Placeholder metni
-            allowClear: true, // Kullanıcı seçimi temizleyebilir
-            width: '100%' // Select2 genişliği tam olmalı
+            placeholder: "Lütfen bir müşteri seçin",
+            allowClear: true,
+            width: '100%'
         });
 
         // Seçimi temizle (ilk yüklemede seçili olmasını engeller)
@@ -508,15 +581,15 @@ aria-labelledby="staticBackdrop" aria-hidden="true">
 
         // Durum seçimi için Select2 başlatma
         $('#confirmation').select2({
-            placeholder: "Lütfen bir durum seçin", // Placeholder metni
-            allowClear: true, // Kullanıcı seçimi temizleyebilir
-            width: '100%' // Select2 genişliği tam olmalı
+            placeholder: "Lütfen bir durum seçin",
+            allowClear: true,
+            width: '100%'
         });
 
         // Seçimi temizle (ilk yüklemede seçili olmasını engeller)
         $('#confirmation').val(null).trigger('change');
 
-    // Yeni Cari ekleme
+        // Yeni Cari ekleme
         // Initialize btn add
         $('#createNewCari').click(function () {
             $('#saveBtnCari').val("create cari");
@@ -531,7 +604,6 @@ aria-labelledby="staticBackdrop" aria-hidden="true">
             e.preventDefault();
 
             var formData = new FormData($('#formCari')[0]);
-
             $.ajax({
                 data: formData,
                 url: "{{ route('cari.store') }}",
@@ -579,9 +651,24 @@ aria-labelledby="staticBackdrop" aria-hidden="true">
 
         loadCariler();
 
+      
+
         // Formu kaydetme işlemi
         $('#saveBtnOffer').on('click', function (e) {
             e.preventDefault();
+
+            var products = []; // Ürünler dizisi
+
+            $('.productRow').each(function() {
+                var row = $(this);
+                var product = {
+                    stock_id: row.find('.productSelect2').val(),
+                    currency: row.find('.currencySelect').val(),
+                    quantity: row.find('.quantity').val(),
+                    price: row.find('.price').val()
+                };
+                products.push(product); // Ürünü products dizisine ekle
+            });
 
             var formData = {
                 offer_id: $('#offer_id').val(),
@@ -597,7 +684,8 @@ aria-labelledby="staticBackdrop" aria-hidden="true">
                 description2: $('#description2').val(),
                 description3: $('#description3').val(),
                 ekalan1: $('#ekalan1').val(),
-                ekalan2: $('#ekalan2').val()
+                ekalan2: $('#ekalan2').val(),
+                products: JSON.stringify(products) // JSON formatında gönder
             };
 
             $.ajax({
@@ -606,13 +694,14 @@ aria-labelledby="staticBackdrop" aria-hidden="true">
                 data: formData,
                 success: function (data) {
                     swal_success();
+                    window.location.href = "{{ route('offer.index') }}";
                 },
                 error: function (data) {
                     swal_error();
                 }
             });
         });
-});
-
+    });
 </script>
+
 @endpush

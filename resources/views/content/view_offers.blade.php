@@ -124,7 +124,6 @@
           
             // initialize btn add
             $('#createNewOffer').click(function () {
-                // Hedef URL
                 window.location.href = "{{ route('offer.add') }}";
             });
             
