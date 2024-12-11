@@ -10003,4 +10003,18 @@ h3 {
     color: inherit;
     border-color: #dee2e6;
   }
+  .select2-container .select2-selection--single {
+    height: 38px; /* Kutu yüksekliği */
+    display: flex; /* Flexbox kullanımı */
+    align-items: center; /* Dikey olarak ortala */
+    justify-content: center; /* Yatay olarak ortala */
+  }
+
+  /* Metin hizalamasını ve varsayılan satır yüksekliğini sıfırlayın */
+  .select2-container--default .select2-selection--single .select2-selection__rendered {
+      line-height: normal; /* Varsayılan satır yüksekliğini kaldır */
+      text-align: left; /* Metni yatay olarak ortala */
+      font-size: 14px; /* Gerekirse font boyutunu ayarlayın */
+      padding: 0; /* Varsayılan padding'i sıfırla */
+  }
 }

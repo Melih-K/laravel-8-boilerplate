@@ -63,11 +63,11 @@
                             </svg>
                             <!--end::Svg Icon-->
                         </span>
-                        <span class="menu-text">Applications</span>
+                        <span class="menu-text">Uygulamalar</span>
                         <i class="menu-arrow"></i>
                     </a>
                     <div class="menu-submenu">
-        
+
                         <ul class="menu-subnav">
                             <li class="menu-item menu-item-parent" aria-haspopup="true">
                                 <span class="menu-link">
@@ -79,28 +79,54 @@
                                     <i class="menu-bullet menu-bullet-line">
                                         <span></span>
                                     </i>
-                                    <span class="menu-text">Users</span>
-                                    <span class="menu-label">
-                                        <span class="label label-rounded label-primary"><?= $count_user ?></span>
-                                    </span>
-                                    
+                                    <span class="menu-text">Kullanıcılar</span>
                                 </a>
-                                
                             </li>
-                    
+                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                                <a href="/stock" class="menu-link menu-toggle">
+                                    <i class="menu-bullet menu-bullet-line">
+                                        <span></span>
+                                    </i>
+                                    <span class="menu-text">Stoklar</span>
+                                </a>
+                            </li>
+                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                                <a href="/cari" class="menu-link menu-toggle">
+                                    <i class="menu-bullet menu-bullet-line">
+                                        <span></span>
+                                    </i>
+                                    <span class="menu-text">Cariler</span>
+                                </a>
+                            </li>
+                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                                <a href="/offers" class="menu-link menu-toggle">
+                                    <i class="menu-bullet menu-bullet-line">
+                                        <span></span>
+                                    </i>
+                                    <span class="menu-text">Teklifler</span>
+                                </a>
+                            </li>
+                            <li class="menu-item menu-item-submenu" aria-haspopup="true" data-menu-toggle="hover">
+                                <a href="/offer_add" class="menu-link menu-toggle">
+                                    <i class="menu-bullet menu-bullet-line">
+                                        <span></span>
+                                    </i>
+                                    <span class="menu-text">Teklif ekle</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
-            
+
                 <li class="menu-item" aria-haspopup="true">
                     <a href="#" class="menu-link">
                         <span class="menu-icon fas fa-cog">
-                           
+
                         </span>
                         <span class="menu-text">App Settings</span>
                     </a>
-                </li>	
-            
+                </li>
+
             </ul>
             <!--end::Menu Nav-->
         </div>

@@ -5,7 +5,7 @@
                 <h2>{{$title}}</h2>
                 <div class="d-flex flex-row-reverse"><button
                         class="btn btn-sm btn-pill btn-outline-primary font-weight-bolder" id="createNewUser"><i
-                            class="fas fa-plus"></i>add data </button></div>
+                            class="fas fa-plus"></i>Ekle </button></div>
             </div>
             <div class="card-body">
                 <div class="col-md-12">
@@ -14,10 +14,10 @@
                             <thead class="font-weight-bold text-center">
                                 <tr>
                                     {{-- <th>No.</th> --}}
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Level</th>
-                                    <th style="width:90px;">Action</th>
+                                    <th>İsim</th>
+                                    <th>E-Posta</th>
+                                    <th>Seviye</th>
+                                    <th style="width:90px;">İşlemler</th>
                                 </tr>
                             </thead>
                             <tbody class="text-center">
@@ -48,7 +48,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary">
-                <h5 class="modal-title text-white" id="exampleModalLabel">Modal User</h5>
+                <h5 class="modal-title text-white" id="exampleModalLabel">Kullanıcı</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <i aria-hidden="true" class="ki ki-close"></i>
                 </button>
@@ -57,21 +57,21 @@
                 <form id="formUser" name="formUser">
                     <div class="form-group">
 
-                        <input type="text" name="name" class="form-control" id="name" placeholder="Nama"><br>
-                        <input type="email" name="email" class="form-control" id="email" placeholder="email"><br>
+                        <input type="text" name="name" class="form-control" id="name" placeholder="İsim Soyisim"><br>
+                        <input type="email" name="email" class="form-control" id="email" placeholder="Email"><br>
                         <select name="level" class="form-control" id="level">
-                            <option value="-">Pilih Level</option>
-                            <option value="1">Operator</option>
-                            <option value="2">Member</option>
+                            <option value="-">Seçiniz</option>
+                            <option value="1">Operatör</option>
+                            <option value="2">Üye</option>
                         </select><br>
-                        <input type="text" name="password" class="form-control" placeholder="password"><br>
+                        <input type="text" name="password" class="form-control" placeholder="Şifre">
                         <input type="hidden" name="user_id" id="user_id" value="">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary font-weight-bold" id="saveBtn">Save changes</button>
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary font-weight-bold" id="saveBtn">Kaydet</button>
             </div>
         </div>
     </div>
@@ -87,7 +87,7 @@
             Swal.fire({
                 position: 'top-end',
                 icon: 'success',
-                title: 'Your work has been saved',
+                title: 'Başarıyla kaydedildi.',
                 showConfirmButton: false,
                 timer: 1000
             })
@@ -97,7 +97,7 @@
             Swal.fire({
                 position: 'centered',
                 icon: 'error',
-                title: 'Something goes wrong !',
+                title: 'Bir şeyler ters gitti !',
                 showConfirmButton: true,
             })
         }
@@ -131,7 +131,7 @@
                 },
             ]
         });
-        
+
         // csrf token
         $.ajaxSetup({
             headers: {
