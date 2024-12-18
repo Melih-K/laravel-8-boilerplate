@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CariController;
 use App\Http\Controllers\HomeController;
@@ -7,7 +8,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\UsersController;
-
 
 
 /*
@@ -49,6 +49,9 @@ Route::get('/offer/{id}/edit', [OfferController::class, 'edit'])->name('offer.ed
 Route::get('/offer/stocks', [OfferController::class, 'getStocks'])->name('stocks.get');
 Route::get('/offers', [OfferController::class, 'index'])->name('offer.index');
 Route::get('/cariler', [OfferController::class, 'getCariler'])->name('cariler.get');
+Route::get('/offer/{id}/pdf', [OfferController::class, 'generatePDF'])->name('offer.pdf');
+
+
 
 // Route::get('/user.get_data',[UserController::class, 'get_data'])->name('get_data');
 Route::resource('users', UsersController::class);

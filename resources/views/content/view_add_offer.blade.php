@@ -694,7 +694,6 @@ aria-labelledby="staticBackdrop" aria-hidden="true">
                 data: formData,
                 success: function (data) {
                     swal_success();
-                    window.location.href = "{{ route('offer.index') }}";
                 },
                 error: function (data) {
                     swal_error();

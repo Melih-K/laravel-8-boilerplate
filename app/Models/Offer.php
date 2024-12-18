@@ -28,6 +28,10 @@ class Offer extends Model
     {
         return $this->belongsTo(Cari::class, 'cari_id');
     }
+    public function stocks()
+    {
+        return $this->hasManyThrough(Stock::class, OfferDetails::class);
+    }
     public function details()
     {
         return $this->hasMany(OfferDetails::class);

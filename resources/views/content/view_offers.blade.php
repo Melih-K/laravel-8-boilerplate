@@ -72,98 +72,105 @@
    
     @push('scripts')
     <script>
-        $(document).ready(function () {
-              // csrf token
-              $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    $(document).ready(function () {
+        // CSRF token
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        // Success alert
+        function swal_success() {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Başarıyla kaydedildi.',
+                showConfirmButton: false,
+                timer: 1000
+            });
+        }
+
+        // Error alert
+        function swal_error() {
+            Swal.fire({
+                position: 'centered',
+                icon: 'error',
+                title: 'Bir şeyler ters gitti!',
+                showConfirmButton: true,
+            });
+        }
+
+        // Table server-side
+        var table = $('#tableOffer').DataTable({
+            processing: false,
+            serverSide: true,
+            ordering: false,
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'excel', 'pdf'
+            ],
+            ajax: "{{ route('offers.index') }}", // Doğru rotaya yönlendiriliyor
+            columns: [
+                { data: 'receiptNo', name: 'receiptNo' },
+                { data: 'documentNo', name: 'documentNo' },
+                { data: 'authorizedCustomer', name: 'authorizedCustomer' },
+                { data: 'date', name: 'date' },
+                { data: 'confirmation', name: 'confirmation' },
+                { data: 'description1', name: 'description1' },
+                { data: 'action', name: 'action', orderable: false, searchable: false }
+            ]
+        });
+
+        // Initialize "Add" button
+        $('#createNewOffer').click(function () {
+            window.location.href = "{{ route('offer.add') }}";
+        });
+
+        // Initialize "Edit" button
+        $('body').on('click', '.editOffer', function () {
+            var offer_id = $(this).data('id');
+            // offer.edit rotasına yönlendirme
+            window.location.href = "{{ route('offer.edit', ':id') }}".replace(':id', offer_id);
+        });
+
+        // Initialize "Delete" button
+        $('body').on('click', '.deleteOffer', function () {
+            var offer_id = $(this).data("id");
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{route('offers.store')}}" + '/' + offer_id,
+                        success: function (data) {
+                            swal_success();
+                            table.draw();
+                        },
+                        error: function (data) {
+                            swal_error();
+                        }
+                    });
                 }
             });
-            // success alert
-            function swal_success() {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Başarıyla kaydedildi.',
-                    showConfirmButton: false,
-                    timer: 1000
-                })
-            }
-            // error alert
-            function swal_error() {
-                Swal.fire({
-                    position: 'centered',
-                    icon: 'error',
-                    title: 'Bir şeyler ters gitti !',
-                    showConfirmButton: true,
-                })
-            }
-            
-            // table serverside
-            var table = $('#tableOffer').DataTable({
-                processing: false,
-                serverSide: true,
-                ordering: false,
-                dom: 'Bfrtip',
-                buttons: [  
-                    'copy', 'excel', 'pdf'
-                ],
-                ajax: "{{ route('offers.index') }}", // Doğru rotaya yönlendiriliyor
-                columns: [
-                    { data: 'receiptNo', name: 'receiptNo' },
-                    { data: 'documentNo', name: 'documentNo' },
-                    { data: 'authorizedCustomer', name: 'authorizedCustomer' },
-                    { data: 'date', name: 'date'},
-                    { data: 'confirmation', name: 'confirmation'},
-                    { data: 'description1', name: 'description1'},
-                    { data: 'action', name: 'action', orderable: false, searchable: false },
-                ]
-            });
+        });
 
-
-          
-            // initialize btn add
-            $('#createNewOffer').click(function () {
-                window.location.href = "{{ route('offer.add') }}";
-            });
+        // Initialize PDF generation button
+        $('body').on('click', '.pdfOffer', function () {
+            var offer_id = $(this).data('id');
             
-            // initialize btn edit
-            $('body').on('click', '.editOffer', function () {
-                var offer_id = $(this).data('id');
-                // offer.edit rotasına yönlendirme
-                window.location.href = "{{ route('offer.edit', ':id') }}".replace(':id', offer_id);
-            });
-            
-            
-            // initialize btn delete
-            $('body').on('click', '.deleteOffer', function () {
-                var offer_id = $(this).data("id");
-
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            type: "DELETE",
-                            url: "{{route('offers.store')}}" + '/' + offer_id,
-                            success: function (data) {
-                                swal_success();
-                                table.draw();
-                            },
-                            error: function (data) {
-                                swal_error();
-                            }
-                        });
-                    }
-                })
-            });
-            // statusing
+            // PDF oluşturma için server tarafına istek gönder
+            window.location.href = "{{ route('offer.pdf', ':id') }}".replace(':id', offer_id);
+        });
     });
+
     </script>
     @endpush

@@ -10,9 +10,13 @@ class OfferDetails extends Model
     use HasFactory;
     protected $fillable = ['offer_id', 'stock_id', 'currency', 'quantity', 'price', 'total'];
 
-    // Teklif ilişkisi
     public function offer()
     {
         return $this->belongsTo(Offer::class);
+    }
+
+    public function stock()
+    {
+        return $this->belongsTo(Stock::class);
     }
 }

@@ -25,4 +25,8 @@ class Stock extends Model
     {
         return $this->hasMany(StockImage::class);
     }
+    public function offerDetail()
+    {
+        return $this->belongsTo(OfferDetails::class); // offer_details tablosuyla ilişki
+    }
 }

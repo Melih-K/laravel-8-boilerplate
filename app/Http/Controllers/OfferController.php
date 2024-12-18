@@ -5,8 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Cari;
 use App\Models\Offer;
 use App\Models\Stock;
+use Barryvdh\DomPDF\PDF;
+use App\Models\StockImage;
+use App\Models\OfferDetails;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
+use TCPDF;
 
 class OfferController extends Controller
 {
@@ -53,6 +58,7 @@ class OfferController extends Controller
 
                             $btn = '<div data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="btn btn-sm btn-icon btn-outline-success btn-circle mr-2 edit editOffer"><i class=" fi-rr-edit"></i></div>';
                             $btn = $btn.' <div data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-sm btn-icon btn-outline-danger btn-circle mr-2 deleteOffer"><i class="fi-rr-trash"></i></div>';
+                            $btn = $btn.' <div data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Pdf" class="btn btn-sm btn-icon btn-outline-primary btn-circle mr-2 pdfOffer"><i class="fa-regular fa-file-pdf"></i></div>';
                             return $btn;
                         })
                         ->rawColumns(['action'])
@@ -124,7 +130,10 @@ class OfferController extends Controller
                 return response()->json(['success' => false, 'message' => 'Ürün bilgileri eksik veya hatalı.'], 400);
             }
 
-            return response()->json(['success' => true, 'message' => 'Teklif ve detayları başarıyla kaydedildi.']);
+            // return redirect()->route('/offers')->with('success', 'Teklif ve detayları başarıyla kaydedildi.');
+            $title = 'Teklifler';
+            return view('content.view_offers', $title);
+           
         }
 
         public function edit($id)
@@ -154,4 +163,40 @@ class OfferController extends Controller
             
             return response()->json($stocks);
         }
-}
+
+        public function generatePdf($id)
+        {
+            // Teklifi ve detaylarını al
+            $offer = Offer::findOrFail($id);
+        
+            // Teklifin detaylarını al
+            $offerDetails = OfferDetails::where('offer_id', $id)->get();
+        
+            $stocks = [];
+            foreach ($offerDetails as $detail) {
+                // Stok bilgilerini al
+                $stock = Stock::find($detail->stock_id);
+                // Stok resimlerini al
+                $images = StockImage::where('stock_id', $detail->stock_id)->get();
+                $stocks[] = [
+                    'stock' => $stock,
+                    'images' => $images
+                ];
+            }
+        
+            // Veriyi PDF için hazırlıyoruz
+            $data = [
+                'offer' => $offer,
+                'stocks' => $stocks
+            ];
+        
+            // PDF'yi nesne tabanlı şekilde oluşturuyoruz
+            $pdf = new TCPDF();
+            $pdf->SetFont('helvetica', '', 12);
+            $pdf = app('dompdf.wrapper');  // 'dompdf.wrapper' servisini kullanarak nesne oluşturuyoruz.
+            $pdf->loadView('content.pdf', $data);
+            
+            // PDF dosyasını tarayıcıda göster
+            return $pdf->stream('offer_'.$offer->id.'.pdf');
+        }
+    }
