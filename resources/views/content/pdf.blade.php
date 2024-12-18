@@ -52,30 +52,6 @@
         <p>Açıklama: {{ $offer->description1 }}</p>
     </div>
 
-    <!-- Teklif Detayları
-    <table class="offer-details">
-        <thead>
-            <tr>
-                <th>Stok Kodu</th>
-                <th>Stok Adı</th>
-                <th>Miktar</th>
-                <th>Fiyat</th>
-                <th>Toplam</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($offer->details as $detail)
-                <tr>
-                    <td>{{ $detail->stock->code }}</td>
-                    <td>{{ $detail->stock->name }}</td>
-                    <td>{{ $detail->quantity }}</td>
-                    <td>{{ $detail->price }}</td>
-                    <td>{{ $detail->quantity * $detail->price }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table> -->
-
     <!-- Stok Resimleri ve Açıklamaları -->
     @foreach ($offer->details as $detail)
         <div class="stock-section">
@@ -88,7 +64,7 @@
                     <td>{{ $detail->stock->stockCode }}</td>
                 </tr>
                 <tr>
-                    <th>Stok Adı</th>
+                    <th>Stok Açıklaması</th>
                     <td>{{ $detail->stock->description }}</td>
                 </tr>
                 <tr>
